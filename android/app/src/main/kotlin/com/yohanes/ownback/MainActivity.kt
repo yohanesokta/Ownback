@@ -1,4 +1,4 @@
-package com.example.ownback
+package com.yohanes.ownback
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,12 @@
 # OwnBack
 
+![GitHub last commit](https://img.shields.io/github/last-commit/yohanesokta/Ownback)
+![GitHub License](https://img.shields.io/github/license/yohanesokta/Ownback)
+
+![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
+![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
+
 A community application that helps people find and return lost items to their owners in a simple, secure, and humane way.
 
 ## Getting Started

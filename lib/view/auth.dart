@@ -10,18 +10,16 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 800),
     );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
   }
 
@@ -31,21 +29,28 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 60),
-                _buildGoogleSignInButton(),
+                const SizedBox(height: 40),
+                _buildTabs(),
+                const SizedBox(height: 30),
+                _buildForm(),
               ],
             ),
           ),
@@ -59,37 +64,44 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
       opacity: _animation,
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, -0.5),
+          begin: const Offset(0, -0.2),
           end: Offset.zero,
         ).animate(_animation),
         child: Column(
           children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.blue,
-              child: Icon(
-                Icons.search,
-                size: 70,
+            Container(
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(18),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.lock_person_outlined,
+                size: 60,
+                color: Color(0xFF3A86FF),
               ),
             ),
             const SizedBox(height: 24),
             const Text(
-              'Welcome to OwnBack',
+              'Welcome!',
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Color(0xFF1E2A3B),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const Text(
-              'The best place to find your lost items and return them to their rightful owners. Let\'s get started!',
+              'Securely sign in or create a new account',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
           ],
         ),
@@ -97,37 +109,184 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildGoogleSignInButton() {
+  Widget _buildTabs() {
     return FadeTransition(
       opacity: _animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.5),
-          end: Offset.zero,
-        ).animate(_animation),
-        child: SizedBox(
-          height: 55,
-          child: ElevatedButton.icon(
-            onPressed: () {
-            },
-            icon: Image.asset(
-              'assets/google_logo.png', 
-              height: 24,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(18),
+              spreadRadius: 1,
+              blurRadius: 10,
             ),
-            label: const Text(
-              'Sign in with Google',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          ],
+        ),
+        child: Row(
+          children: [_buildTabItem(0, 'Sign In'), _buildTabItem(1, 'Register')],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem(int index, String title) {
+    final isSelected = _currentIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onTabTapped(index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            gradient: isSelected
+                ? const LinearGradient(
+                    colors: [Color(0xFF3A86FF), Color(0xFF00B4D8)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )
+                : null,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black87,
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 0.1),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: _currentIndex == 0 ? _buildSignInForm() : _buildRegisterForm(),
+    );
+  }
+
+  Widget _buildSignInForm() {
+    return Column(
+      key: const ValueKey('signIn'),
+      children: [
+        _buildTextField(icon: Icons.alternate_email, hintText: 'Email'),
+        const SizedBox(height: 16),
+        _buildTextField(
+          icon: Icons.lock_outline_rounded,
+          hintText: 'Password',
+          obscureText: true,
+        ),
+        const SizedBox(height: 30),
+        _buildSubmitButton('Sign In'),
+      ],
+    );
+  }
+
+  Widget _buildRegisterForm() {
+    return Column(
+      key: const ValueKey('register'),
+      children: [
+        _buildTextField(
+          icon: Icons.person_outline_rounded,
+          hintText: 'Full Name',
+        ),
+        const SizedBox(height: 16),
+        _buildTextField(icon: Icons.alternate_email, hintText: 'Email'),
+        const SizedBox(height: 16),
+        _buildTextField(
+          icon: Icons.lock_outline_rounded,
+          hintText: 'Password',
+          obscureText: true,
+        ),
+        const SizedBox(height: 30),
+        _buildSubmitButton('Register'),
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required IconData icon,
+    required String hintText,
+    bool obscureText = false,
+  }) {
+    return TextField(
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: Icon(icon, color: Colors.grey[400]),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 20,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFF3A86FF), width: 2),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(String text) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF3A86FF), Color(0xFF00B4D8)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3A86FF).withAlpha(102),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            child: Center(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
-              elevation: 2,
             ),
           ),
         ),
