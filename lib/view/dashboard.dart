@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ownback/components/home.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -33,8 +37,8 @@ class _DashboardState extends State<Dashboard>
       ]),
       bottomNavigationBar: TabBar(
         tabs: const [
-          Tab(icon: Icon(Icons.home_outlined), text: 'Home'),
-          Tab(icon: Icon(Icons.person_outline), text: 'Profile'),
+          Tab(icon: Icon(FontAwesomeIcons.house,size: 18,), text: 'Home'),
+          Tab(icon: Icon(FontAwesomeIcons.user,size: 18,), text: 'Profile'),
         ],
         controller: _controller,
       ),
