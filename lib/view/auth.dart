@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ownback/utils/models/users.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});
@@ -10,7 +11,32 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  String _errorMessage = '';
+
   int _currentIndex = 0;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
+  TextEditingController loginEmailController = TextEditingController();
+  TextEditingController loginPasswordController = TextEditingController();
+
+  Future<void> _registerUser() async {
+    try {
+      await createUsers(
+        nameController.text,
+        passwordController.text,
+        emailController.text,
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to register user';
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -103,6 +129,32 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
+            (_errorMessage != "")
+                ? const SizedBox(height: 8)
+                : const SizedBox(height: 0),
+            (_errorMessage != "")
+                ? Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(18),
+                          blurRadius: 20,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                : const SizedBox(height: 0),
           ],
         ),
       ),
@@ -188,15 +240,20 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     return Column(
       key: const ValueKey('signIn'),
       children: [
-        _buildTextField(icon: Icons.alternate_email, hintText: 'Email'),
+        _buildTextField(
+          icon: Icons.alternate_email,
+          hintText: 'Email',
+          controller: loginEmailController,
+        ),
         const SizedBox(height: 16),
         _buildTextField(
           icon: Icons.lock_outline_rounded,
           hintText: 'Password',
+          controller: loginPasswordController,
           obscureText: true,
         ),
         const SizedBox(height: 30),
-        _buildSubmitButton('Sign In'),
+        _buildSubmitButton('Sign In', null),
       ],
     );
   }
@@ -207,18 +264,31 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
       children: [
         _buildTextField(
           icon: Icons.person_outline_rounded,
+          controller: nameController,
           hintText: 'Full Name',
         ),
         const SizedBox(height: 16),
-        _buildTextField(icon: Icons.alternate_email, hintText: 'Email'),
+        _buildTextField(
+          icon: Icons.alternate_email,
+          hintText: 'Email',
+          controller: emailController,
+        ),
         const SizedBox(height: 16),
         _buildTextField(
           icon: Icons.lock_outline_rounded,
           hintText: 'Password',
           obscureText: true,
+          controller: passwordController,
+        ),
+        const SizedBox(height: 16),
+        _buildTextField(
+          icon: Icons.lock_outline_rounded,
+          hintText: 'Confirm Password',
+          obscureText: true,
+          controller: confirmPasswordController,
         ),
         const SizedBox(height: 30),
-        _buildSubmitButton('Register'),
+        _buildSubmitButton('Register', _registerUser),
       ],
     );
   }
@@ -227,8 +297,10 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     required IconData icon,
     required String hintText,
     bool obscureText = false,
+    TextEditingController? controller,
   }) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         hintText: hintText,
@@ -251,7 +323,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildSubmitButton(String text) {
+  Widget _buildSubmitButton(String text, VoidCallback? onPressed) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -271,9 +343,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
+          onTap: onPressed ?? () {},
           borderRadius: BorderRadius.circular(16),
           child: Container(
             width: double.infinity,
