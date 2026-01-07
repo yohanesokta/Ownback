@@ -60,11 +60,11 @@ For `flutter` related help, view the [online documentation](https://flutter.dev/
 ## 🔐 Authentication (Login Feature)
 > *Simple & safe authentication — no social pressure.*
 
-- [ ] Login screen UI
-- [ ] Register screen UI
-- [ ] Input validation (email & password)
-- [ ] Local auth logic (mock / local-first)
-- [ ] Login state persistence
+- [✔️] Login screen UI
+- [✔️] Register screen UI
+- [✔️] Input validation (email & password)
+- [✔️] Local auth logic (mock / local-first)
+- [✔️] Login state persistence
 - [ ] Logout functionality
 - [ ] Redirect flow (unauthenticated → login)
 

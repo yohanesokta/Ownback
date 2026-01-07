@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ownback/view/auth.dart';
 import 'package:ownback/view/dashboard.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 Future<void> main() async {
-  await Supabase.initialize(url: "", anonKey: "");
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

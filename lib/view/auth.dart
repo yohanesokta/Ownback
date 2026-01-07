@@ -25,15 +25,41 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
 
   Future<void> _registerUser() async {
     try {
-      await createUsers(
+      final _create = await createUsers(
         nameController.text,
         passwordController.text,
         emailController.text,
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      if (_create['success'] == true) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        setState(() {
+          _errorMessage = _create['message'] ?? 'Registration failed. Please try again.';
+        });
+      }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to register user';
+        _errorMessage = 'Internal server error. Please try again later.';
+      });
+    }
+  }
+
+  Future<void> _loginUser() async {
+    try {
+      final _login = await loginUsers(
+        loginPasswordController.text,
+        loginEmailController.text,
+      );
+      if (_login['success'] == true) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        setState(() {
+          _errorMessage = _login['message'] ?? 'Login failed. Please try again.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Internal server error. Please try again later.';
       });
     }
   }
@@ -253,7 +279,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
           obscureText: true,
         ),
         const SizedBox(height: 30),
-        _buildSubmitButton('Sign In', null),
+        _buildSubmitButton('Sign In', _loginUser),
       ],
     );
   }

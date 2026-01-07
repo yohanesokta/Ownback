@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ownback/components/home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
-
-
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
