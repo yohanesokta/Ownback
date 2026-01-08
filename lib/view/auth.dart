@@ -31,7 +31,9 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
         emailController.text,
       );
       if (_create['success'] == true) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
+        setState(() {
+          _controller.reverse();
+        });
       } else {
         setState(() {
           _errorMessage = _create['message'] ?? 'Registration failed. Please try again.';
@@ -64,9 +66,17 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     }
   }
 
+  Future<void> _checkAuthentication() async {
+    final isAuthenticated = await checkIsAuthenticated();
+    if (isAuthenticated) {
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
